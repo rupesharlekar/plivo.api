@@ -13,8 +13,6 @@ class RestClient:
 
         requests.session().auth = HTTPBasicAuth(PlivoConfig.AUTH_ID, PlivoConfig.AUTH_TOKEN)
 
-        self.uri = self.uri + '/' + PlivoConfig.AUTH_ID + '/'
-
         api_url = self.uri + api_name[0]
 
         if api_data:
@@ -22,8 +20,8 @@ class RestClient:
         else:
             resp = requests.get(api_url)
 
-        if resp.status_code == requests.codes.ok:
-            return json.loads(resp.text)
+        if resp.status_code in [requests.codes.ok, requests.codes.created, requests.codes.accepted]:
+            return (resp.status_code, json.loads(resp.text))
 
 @pytest.fixture(autouse=True, scope="session")
 def initialise():
