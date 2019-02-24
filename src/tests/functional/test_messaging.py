@@ -4,7 +4,7 @@ from plivoConfig import PlivoConfig
 import requests
 
 @pytest.fixture(scope='function')
-def test_setup_teardown():
+def setup_teardown():
 
     print("\n--- starting test setup --- \n")
 
@@ -41,12 +41,12 @@ def test_setup_teardown():
 
 
 @pytest.mark.functional
-def test_message_pricing(test_setup_teardown):
+def test_message_pricing(setup_teardown):
 
-    sender = test_setup_teardown[0]
-    receiver = test_setup_teardown[1]
-    expected_msg_outbound_rate = test_setup_teardown[2]
-    account_credits_at_start = test_setup_teardown[3]
+    sender = setup_teardown[0]
+    receiver = setup_teardown[1]
+    expected_msg_outbound_rate = setup_teardown[2]
+    account_credits_at_start = setup_teardown[3]
 
     send_message_response_response_code, send_message_response = callerRestClient.send_request(PlivoConfig.AUTH_ID + '/Message',
                                         src = sender,
