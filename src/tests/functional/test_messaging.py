@@ -1,12 +1,20 @@
 import pytest
 import random
-import PlivoConfig
+from tests import PlivoConfig
 import requests
 
 @pytest.fixture(scope='function')
 def setup_teardown():
 
     print("\n--- starting test setup --- \n")
+
+    prereq_info = {}
+
+    get_account_details_status_code , get_account_details = callerRestClient.send_request(PlivoConfig.AUTH_ID)
+    assert get_account_details_status_code == requests.codes.ok
+    print("\nget_account_details:\n", get_account_details)
+    account_credits_at_start = get_account_details['cash_credits']
+    prereq_info['account_credits_at_start'] = account_credits_at_start
 
     get_numbers_response_status_code , get_numbers_response = callerRestClient.send_request(
         PlivoConfig.AUTH_ID + '/Number')
@@ -17,21 +25,16 @@ def setup_teardown():
 
     (sender, receiver) = tuple(random.sample(account_phone_numbers, 2))
 
+    prereq_info['numbers'] = [sender,receiver]
+
     get_pricing_response_status_code, get_pricing_response = callerRestClient.send_request(
-        PlivoConfig.AUTH_ID + '/PhoneNumber/?country_iso=' + PlivoConfig.COUNTRY_CODE)
+        PlivoConfig.AUTH_ID + '/Pricing/?country_iso=' + PlivoConfig.COUNTRY_CODE)
     assert get_pricing_response_status_code == requests.codes.ok
     print("\nget_pricing_response:\n", get_pricing_response)
 
     msg_outbound_rate = get_pricing_response['message']['outbound']['rate']
 
-    prereq_info = (sender, receiver).append(msg_outbound_rate)
-
-    get_account_details_status_code , get_account_details = callerRestClient.send_request(PlivoConfig.AUTH_ID)
-    assert get_account_details_status_code == requests.codes.ok
-    print("\nget_account_details:\n", get_account_details)
-    account_credits_at_start = get_account_details['cash_credits']
-
-    prereq_info.append(account_credits_at_start)
+    prereq_info['msg_outbound_rate'] = msg_outbound_rate
 
     print("\n--- finishing test setup --- \n")
 
@@ -41,12 +44,13 @@ def setup_teardown():
     # # # Nothing to do here
     # print("\n--- finishing test teardown --- \n")
 
+@pytest.mark.functional
 def test_message_pricing(setup_teardown):
 
-    sender = setup_teardown[0]
-    receiver = setup_teardown[1]
-    expected_msg_outbound_rate = setup_teardown[2]
-    account_credits_at_start = setup_teardown[3]
+    sender = setup_teardown['numbers'][0]
+    receiver = setup_teardown['numbers'][1]
+    expected_msg_outbound_rate = setup_teardown['msg_outbound_rate']
+    account_credits_at_start = setup_teardown['account_credits_at_start']
 
     send_message_response_response_code, send_message_response = callerRestClient.send_request(
         PlivoConfig.AUTH_ID + '/Message',
@@ -56,7 +60,8 @@ def test_message_pricing(setup_teardown):
     assert send_message_response_response_code == requests.codes.accepted
     print("\nsend_message_response:\n",send_message_response)
 
-    message_uuid = send_message_response['message_uuid']
+    assert len(send_message_response['message_uuid']) == 1
+    message_uuid = send_message_response['message_uuid'][0]
 
     get_sent_message_details_status_code , get_sent_message_details = callerRestClient.send_request(
         PlivoConfig.AUTH_ID + '/Message/' + message_uuid)
