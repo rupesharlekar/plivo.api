@@ -1,14 +1,15 @@
 import pytest
 import random
-from plivoConfig import PlivoConfig
+import PlivoConfig
 import requests
 
 @pytest.fixture(scope='function')
-def test_setup_teardown():
+def setup_teardown():
 
     print("\n--- starting test setup --- \n")
 
-    get_numbers_response_status_code , get_numbers_response = callerRestClient.send_request(PlivoConfig.AUTH_ID +'/Number')
+    get_numbers_response_status_code , get_numbers_response = callerRestClient.send_request(
+        PlivoConfig.AUTH_ID + '/Number')
     assert get_numbers_response_status_code == requests.codes.ok
     print("\nget_numbers_response:\n",get_numbers_response)
 
@@ -16,7 +17,8 @@ def test_setup_teardown():
 
     (sender, receiver) = tuple(random.sample(account_phone_numbers, 2))
 
-    get_pricing_response_status_code, get_pricing_response = callerRestClient.send_request(PlivoConfig.AUTH_ID + '/PhoneNumber/?country_iso='+ PlivoConfig.COUNTRY_CODE)
+    get_pricing_response_status_code, get_pricing_response = callerRestClient.send_request(
+        PlivoConfig.AUTH_ID + '/PhoneNumber/?country_iso=' + PlivoConfig.COUNTRY_CODE)
     assert get_pricing_response_status_code == requests.codes.ok
     print("\nget_pricing_response:\n", get_pricing_response)
 
@@ -39,25 +41,25 @@ def test_setup_teardown():
     # # # Nothing to do here
     # print("\n--- finishing test teardown --- \n")
 
+def test_message_pricing(setup_teardown):
 
-@pytest.mark.functional
-def test_message_pricing(test_setup_teardown):
+    sender = setup_teardown[0]
+    receiver = setup_teardown[1]
+    expected_msg_outbound_rate = setup_teardown[2]
+    account_credits_at_start = setup_teardown[3]
 
-    sender = test_setup_teardown[0]
-    receiver = test_setup_teardown[1]
-    expected_msg_outbound_rate = test_setup_teardown[2]
-    account_credits_at_start = test_setup_teardown[3]
-
-    send_message_response_response_code, send_message_response = callerRestClient.send_request(PlivoConfig.AUTH_ID + '/Message',
-                                        src = sender,
-                                        dst = receiver,
-                                        text = "Hi, text from Plivo")
+    send_message_response_response_code, send_message_response = callerRestClient.send_request(
+        PlivoConfig.AUTH_ID + '/Message',
+        src = sender,
+        dst = receiver,
+        text = "Hi, text from Plivo")
     assert send_message_response_response_code == requests.codes.accepted
     print("\nsend_message_response:\n",send_message_response)
 
     message_uuid = send_message_response['message_uuid']
 
-    get_sent_message_details_status_code , get_sent_message_details = callerRestClient.send_request(PlivoConfig.AUTH_ID +'/Message/'+ message_uuid)
+    get_sent_message_details_status_code , get_sent_message_details = callerRestClient.send_request(
+        PlivoConfig.AUTH_ID + '/Message/' + message_uuid)
     assert get_sent_message_details_status_code == requests.codes.ok
     print("\nget_sent_message_details:\n", get_sent_message_details)
 

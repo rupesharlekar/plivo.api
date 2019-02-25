@@ -3,7 +3,7 @@ import pytest
 import requests
 from requests.auth import HTTPBasicAuth
 
-from plivoConfig import PlivoConfig
+import PlivoConfig
 
 class RestClient:
     def __init__(self, host, version, path_prefix='', scheme='https://'):
