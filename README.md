@@ -10,7 +10,7 @@ Verify the messaging fucntionality of the Plivo API as per [assignment](https://
 
 ## Features
 - test code is scalable
-- easy to maintain
+- used to connect to API that uses HTTP Basic Authentication
 
 ## Installation
 
