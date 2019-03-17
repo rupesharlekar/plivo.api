@@ -5,7 +5,10 @@ import requests
 
 @pytest.fixture(scope='function')
 def setup_teardown():
-
+    """
+    Used as prerequisite for setting all the parameters that will help in actual test validation.
+    code block before 'yield prereq_info' is used as beforeTest
+    """
     print("\n--- starting test setup --- \n")
 
     prereq_info = {}
@@ -44,7 +47,10 @@ def setup_teardown():
 
 @pytest.mark.functional
 def test_message_pricing(setup_teardown):
-
+    """
+    Actual test validation happens here
+    :param setup_teardown: dictionary that contains all the prereq information
+    """
     sender = setup_teardown['numbers'][0]
     receiver = setup_teardown['numbers'][1]
     expected_msg_outbound_rate = setup_teardown['msg_outbound_rate']
@@ -55,6 +61,13 @@ def test_message_pricing(setup_teardown):
     print("expected_msg_outbound_rate",expected_msg_outbound_rate)
     print("account_credits_at_start",account_credits_at_start)
 
+    #   Call the POST /Message endpoint
+    #   request payload example:
+    #   {
+    #     "src": "16469188724",
+    #     "dst": "12395992173",
+    #     "text": "Hi, text from Plivo"
+    #   }
     send_message_response_response_code, send_message_response = callerRestClient.send_request(
                                                                         PlivoConfig.AUTH_ID + '/Message',
                                                                         src = sender,
@@ -78,6 +91,7 @@ def test_message_pricing(setup_teardown):
     print("\nget_account_details:\n", get_account_details)
     assert get_account_details_status_code == requests.codes.ok
 
+    # verify the account credits remaining at end is same as the difference between credits at start and amount deducted based on message rate
     account_credits_remaining = get_account_details['cash_credits']
     assert account_credits_remaining == (account_credits_at_start - actual_msg_amount_deducted)
 
