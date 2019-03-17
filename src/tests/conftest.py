@@ -18,7 +18,7 @@ class RestClient:
         api_url = self.uri + api_name[0]
 
         if api_data:
-            import pdb;pdb.set_trace()
+            # import pdb;pdb.set_trace()
             resp = self.req.post(api_url, json=api_data)
         else:
             resp = self.req.get(api_url)

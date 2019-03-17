@@ -52,6 +52,11 @@ def test_message_pricing(setup_teardown):
     expected_msg_outbound_rate = setup_teardown['msg_outbound_rate']
     account_credits_at_start = setup_teardown['account_credits_at_start']
 
+    print("sender",sender)
+    print("receiver",receiver)
+    print("expected_msg_outbound_rate",expected_msg_outbound_rate)
+    print("account_credits_at_start",account_credits_at_start)
+
     send_message_response_response_code, send_message_response = callerRestClient.send_request(
         PlivoConfig.AUTH_ID + '/Message',
         src = sender,
