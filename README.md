@@ -17,9 +17,9 @@ Prerequisite are taken care of by using an _function_ scoped _pytest fixture_ an
 - used to connect to API that uses HTTP Basic Authentication
 
 ## Installation
-
+`git clone git@github.com:rupesharlekar/plivo.api.git  && cd plivo.api`  
+`pip install -r requirements.txt`
 
 ## How to run tests
-```cd ../plivo.api/src/tests/functional```
-
-```pytest -vs test_messaging.py -m functional```
+`cd ../plivo.api/src/tests/functional`  
+`pytest -vs test_messaging.py -m functional`
