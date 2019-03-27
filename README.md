@@ -1,4 +1,3 @@
-## Assignment
 Verify the messaging functionality of the Plivo API as per [assignment](https://github.com/rupesharlekar/plivo.api/blob/master/Message%20API.pdf) document
 
 Tests Performed
