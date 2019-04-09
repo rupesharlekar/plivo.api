@@ -1,7 +1,4 @@
-Verify the messaging functionality of the Plivo API as per [assignment](https://github.com/rupesharlekar/plivo.api/blob/master/Message%20API.pdf) document
 
-Tests Performed
-1. All the tests / steps mentioned in the ***Scenarios*** section of the [assignment](https://github.com/rupesharlekar/plivo.api/blob/master/Message%20API.pdf) document are coded for.
 Prerequisite are taken care of by using an _function_ scoped _pytest fixture_ and actual test is performed inside _test__ definition 
  
 ## Technology / Frameworks used
